@@ -62,3 +62,24 @@ export function getDetailsPokemon(id) {
     },
   });
 }
+
+export function getMoves(urlParam) {
+  return $.ajax({
+    type: "GET",
+    dataType: "json",
+    url: urlParam,
+    success: function (data) {},
+    error: function (xhr, status, error) {
+      alert(
+        "Result: " +
+          status +
+          " " +
+          error +
+          " " +
+          xhr.status +
+          " " +
+          xhr.statusText
+      );
+    },
+  });
+}

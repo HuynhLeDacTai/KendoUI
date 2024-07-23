@@ -3,6 +3,26 @@ const params = new URLSearchParams(queryString); // Converts the query string to
 const param = params.get("id") || params.get("name");
 var pokemon;
 
+const colorTypes = [
+  { name: "bug", color: "#94BC4A" },
+  { name: "dark", color: "#736C75" },
+  { name: "dragon", color: "#6A7BAF" },
+  { name: "electric", color: "#E5C531" },
+  { name: "fairy", color: "#E397D1" },
+  { name: "fighting", color: "#CB5F48" },
+  { name: "fire", color: "#EA7A3C" },
+  { name: "flying", color: "#7DA6DE" },
+  { name: "ghost", color: "#846AB6" },
+  { name: "grass", color: "#71C558" },
+  { name: "ground", color: "#CC9F4F" },
+  { name: "ice", color: "#70CBD4" },
+  { name: "poison", color: "#B468B7" },
+  { name: "psychic", color: "#E5709B" },
+  { name: "rock", color: "#B2A061" },
+  { name: "steel", color: "#89A1B0" },
+  { name: "water", color: "#539AE2" },
+];
+
 $(window).on("load", function () {
   getDetailsPokemon(param)
     .then((response) => {
@@ -10,13 +30,14 @@ $(window).on("load", function () {
       $(".k-card-media").attr("src", response.sprites.front_default);
       $(".pokemon-name").text(response.name);
 
-      response.types.map((item) => {
+      response.types.map((item, index) => {
         $(".pokemon-type").append(
-          `<p class="pokemon-type-name">${item.type.name}</p>`
+          `<p class="pokemon-type-name-${index}">${item.type.name}</p>`
         );
-        $(".pokemon-type-name").css({
+        const bgcolor = colorTypes.find((e) => e.name === item.type.name);
+        $(`.pokemon-type-name-${index}`).css({
           display: "inline-block",
-          border: "2px solid #ccc",
+          backgroundColor: bgcolor.color,
           padding: "8px",
           borderRadius: "16px",
           minWidth: "40px",
@@ -27,6 +48,7 @@ $(window).on("load", function () {
         items: response.moves.slice(0, 4).map((item) => {
           return { label: item.move.name };
         }),
+        themeColor: "red",
       });
 
       var progressbars = [];
