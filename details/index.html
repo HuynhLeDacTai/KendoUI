@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home Page</title>
+    <link
+      rel="stylesheet"
+      href="https://kendo.cdn.telerik.com/themes/8.0.1/default/default-main.css"
+    />
+    <link rel="stylesheet" href="./style.css" />
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2024.2.514/js/kendo.all.min.js"></script>
+  </head>
+  <body>
+    <header>
+      <img class="logo" src="../assets/images/pokemon-logo.png" />
+      <input
+        type="text"
+        class="search-bar"
+        placeholder="Search pokemon by name or id ..."
+      />
+    </header>
+    <div class="container">
+      <div class="k-card">
+        <img
+          alt="Kendo UI for jQuery Card Colosseum in Rome"
+          class="k-card-media"
+        />
+        <div class="k-card-body">
+          <h1 class="pokemon-name"></h1>
+          <h3 class="pokemon-type">Type:</h3>
+          <label class="k-label" for="categories">Moves: </label>
+          <div id="pokemon-moves"></div>
+        </div>
+      </div>
+
+      <div class="k-card">
+        <div class="k-card-body">
+          <ul class="stats-list">
+            <li>
+              <h4>Hp:</h4>
+              <div id="hp-stat"></div>
+            </li>
+            <li>
+              <h4>Attack:</h4>
+              <div id="atk-stat"></div>
+            </li>
+            <li>
+              <h4>Depense:</h4>
+              <div id="def-stat"></div>
+            </li>
+            <li>
+              <h4>Spe-attack:</h4>
+              <div id="spe-atk-stat"></div>
+            </li>
+            <li>
+              <h4>Spe-defense:</h4>
+              <div id="spe-def-stat"></div>
+            </li>
+            <li>
+              <h4>Speed:</h4>
+              <div id="spd-stat"></div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <button id="nextButton">Next</button>
+    <script src="./script.js"></script>
+  </body>
+</html>

@@ -1,0 +1,17 @@
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.k-card {
+    width: 326px;
+}
+
+.k-card-title {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: bold;
+}
