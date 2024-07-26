@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="https://kendo.cdn.telerik.com/themes/8.0.1/default/default-main.css" rel="stylesheet"/>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2024.2.514/js/kendo.all.min.js"></script>
+</head>
+<body>
+<div id="example">
+    <h1 th:text="'Home Page'"></h1>
+    <table>
+        <thead>
+        <tr>
+            <th> Name</th>
+            <th> Email</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="user : ${users}">
+            <td><span th:text="${user.name}"> Name </span></td>
+            <td><span th:text="${user.email}"> Email </span></td>
+        </tr>
+        </tbody>
+    </table>
+    <input id="user" value="1"/>
+    <button id="add">Add a new row</button>
+    <div id="grid"></div>
+    <script>
+        $(document).ready(function () {
+            $("#add").kendoButton({
+                themeColor: "success",
+                click: function () {
+                    var grid = $("#grid").data("kendoGrid");
+                    grid.addRow();
+                }
+            });
+            $("#grid").kendoGrid({
+                editable: "incell",
+                toolbar: ["save"],
+                dataSource: {
+                    type: "json",
+                    transport: {
+                        read: "http://localhost:8081/users",
+                        create: function () {
+                            $.ajax({
+                                url: "http://localhost:8081/users",
+                                // data : ,
+                                dataType: "json", // "jsonp" is required for cross-domain requests; use "json" for same-domain requests
+                                success: function (result) {
+                                    // notify the data source that the request succeeded
+                                    options.success(result);
+                                },
+                                error: function (result) {
+                                    // notify the data source that the request failed
+                                    options.error(result);
+                                }
+                            });
+                        },
+                        destroy: {
+                            url: "http://localhost:8081/users",
+                            dataType: "json",
+                            type: "delete"
+                        },
+                        parameterMap: function (data, type) {
+                            if (type == "create") {
+                                return {
+
+                                    email: data.email,
+                                    name: data.name,
+                                    Dob: data.Dob
+
+                                };
+                            }
+                            if (type == "destroy") {
+                                return {
+                                    id: data.id
+                                };
+                            }
+                        }
+                    },
+                    pageSize: 10,
+                    schema: {
+                        model: {
+                            id: "id",
+                            fields: {
+                                id: {editable: false, nullable: true},
+                                name: {type: "string"},
+                                email: {type: "string"},
+                                Dob: {type: "date"},
+                            }
+                        }
+                    },
+                },
+                height: 550,
+                groupable: true,
+                sortable: true,
+                pageable: {
+                    refresh: true,
+                    pageSizes: true,
+                    buttonCount: 5
+                },
+                columns: [{
+                    field: "name",
+                    title: "Name",
+                    template: "<p >#: name #</p>"
+
+                }, {
+                    field: "email",
+                    title: "Email",
+                    template: "<p >#: email #</p>"
+
+                }
+                    , {
+                        field: "Dob",
+                        title: "Date of birth",
+                        template: "<p >#: Dob #</p>"
+
+                    }, {command: "destroy", title: "&nbsp;", width: 120}
+                ],
+                saveChanges: function (e) {
+                    if (!confirm("Are you sure you want to save all changes?")) {
+                        this.dataSource.sync()
+                        e.preventDefault();
+                    }
+                },
+            });
+            $("#user").kendoDropDownList({
+                dataTextField: "name",
+                dataValueField: "id",
+                dataSource: {
+                    type: "json",
+                    transport: {
+                        read: "http://localhost:8081/users",
+                    },
+                    pageSize: 20
+                },
+                index: 0,
+            });
+        });
+    </script>
+</div>
+</body>
+</html>
