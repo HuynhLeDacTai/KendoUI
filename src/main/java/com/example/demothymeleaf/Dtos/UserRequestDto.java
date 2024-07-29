@@ -2,6 +2,8 @@ package com.example.demothymeleaf.Dtos;
 
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Builder
 @Getter
 @Setter
@@ -11,5 +13,5 @@ import lombok.*;
 public class UserRequestDto {
     String name;
     String email;
-    String Dob;
+    LocalDateTime dob;
 }

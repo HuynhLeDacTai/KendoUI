@@ -23,7 +23,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void addUser(UserRequestDto user) {
-        User newUser = User.builder().name(user.getName()).email(user.getEmail()).build();
+        User newUser = User.builder().name(user.getName()).email(user.getEmail()).Dob(user.getDob()).build();
+
+        System.out.printf(String.valueOf(newUser));
         userRepository.save(newUser);
     }
 

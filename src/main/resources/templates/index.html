@@ -44,20 +44,9 @@
                     type: "json",
                     transport: {
                         read: "http://localhost:8081/users",
-                        create: function () {
-                            $.ajax({
-                                url: "http://localhost:8081/users",
-                                // data : ,
-                                dataType: "json", // "jsonp" is required for cross-domain requests; use "json" for same-domain requests
-                                success: function (result) {
-                                    // notify the data source that the request succeeded
-                                    options.success(result);
-                                },
-                                error: function (result) {
-                                    // notify the data source that the request failed
-                                    options.error(result);
-                                }
-                            });
+                        create: {
+                            url: "http://localhost:8081/users",
+                            type: "post",
                         },
                         destroy: {
                             url: "http://localhost:8081/users",
@@ -65,16 +54,14 @@
                             type: "delete"
                         },
                         parameterMap: function (data, type) {
-                            if (type == "create") {
-                                return {
-
+                            if (type === "create") {
+                                return JSON.stringify({
                                     email: data.email,
                                     name: data.name,
-                                    Dob: data.Dob
-
-                                };
+                                    dob: data.Dob
+                                });
                             }
-                            if (type == "destroy") {
+                            if (type === "destroy") {
                                 return {
                                     id: data.id
                                 };
@@ -86,7 +73,6 @@
                         model: {
                             id: "id",
                             fields: {
-                                id: {editable: false, nullable: true},
                                 name: {type: "string"},
                                 email: {type: "string"},
                                 Dob: {type: "date"},
