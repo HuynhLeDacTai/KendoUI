@@ -25,11 +25,37 @@
         </tr>
         </tbody>
     </table>
-    <input id="user" value="1"/>
-    <button id="add">Add a new row</button>
+    <label for="user">Selection</label><input id="user" value="1"/>
+    <button id="add" style="margin: 20px 0 ">Add a new row</button>
     <div id="grid"></div>
-    <script>
+    <script th:inline="javascript">
+        var usersList = [[${users}]];
+        var dataSource;
         $(document).ready(function () {
+
+            dataSource = new kendo.data.DataSource({
+                // data: usersList,
+
+                transport: {
+                    read: {
+                        url: "http://localhost:8081/users",
+                        type: "GET",
+                        dataType: "odata"
+                    }
+                },
+                schema: {
+                    model: {
+                        id: "id",
+                        fields: {
+                            id: {editable: false, nullable: true, type: "number"},
+                            name: {type: "string"},
+                            email: {type: "string"},
+                            dob: {type: "date"},
+                        }
+                    }
+                },
+            })
+
             $("#add").kendoButton({
                 themeColor: "success",
                 click: function () {
@@ -37,49 +63,11 @@
                     grid.addRow();
                 }
             });
+
             $("#grid").kendoGrid({
-                editable: "incell",
+                editable: "popup",
                 toolbar: ["save"],
-                dataSource: {
-                    type: "json",
-                    transport: {
-                        read: "http://localhost:8081/users",
-                        create: {
-                            url: "http://localhost:8081/users",
-                            type: "post",
-                        },
-                        destroy: {
-                            url: "http://localhost:8081/users",
-                            dataType: "json",
-                            type: "delete"
-                        },
-                        parameterMap: function (data, type) {
-                            if (type === "create") {
-                                return JSON.stringify({
-                                    email: data.email,
-                                    name: data.name,
-                                    dob: data.Dob
-                                });
-                            }
-                            if (type === "destroy") {
-                                return {
-                                    id: data.id
-                                };
-                            }
-                        }
-                    },
-                    pageSize: 10,
-                    schema: {
-                        model: {
-                            id: "id",
-                            fields: {
-                                name: {type: "string"},
-                                email: {type: "string"},
-                                Dob: {type: "date"},
-                            }
-                        }
-                    },
-                },
+                dataSource: dataSource,
                 height: 550,
                 groupable: true,
                 sortable: true,
@@ -100,9 +88,9 @@
 
                 }
                     , {
-                        field: "Dob",
+                        field: "dob",
                         title: "Date of birth",
-                        template: "<p >#: Dob #</p>"
+                        template: "<p >#: dob #</p>"
 
                     }, {command: "destroy", title: "&nbsp;", width: 120}
                 ],
@@ -112,17 +100,11 @@
                         e.preventDefault();
                     }
                 },
-            });
+            }).data("kendoGrid");
             $("#user").kendoDropDownList({
                 dataTextField: "name",
                 dataValueField: "id",
-                dataSource: {
-                    type: "json",
-                    transport: {
-                        read: "http://localhost:8081/users",
-                    },
-                    pageSize: 20
-                },
+                dataSource: usersList,
                 index: 0,
             });
         });
