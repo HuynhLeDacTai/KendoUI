@@ -27,49 +27,73 @@
     </table>
     <label for="user">Selection</label><input id="user" value="1"/>
     <button id="add" style="margin: 20px 0 ">Add a new row</button>
+    <button id="add-selected" style="margin: 20px 0 ">Add selected item</button>
     <div id="grid"></div>
     <script th:inline="javascript">
-        var usersList = [[${users}]];
-        var dataSource;
         $(document).ready(function () {
-
-            dataSource = new kendo.data.DataSource({
-                // data: usersList,
-
-                transport: {
-                    read: {
-                        url: "http://localhost:8081/users",
-                        type: "GET",
-                        dataType: "odata"
+            showDropDownList(dataDropDown);
+            showDataGrid(dataSource)
+            showButton()
+        });
+        var selectedItem
+        var dataSource = new kendo.data.DataSource({
+            data: [[${users}]],
+            schema: {
+                model: {
+                    id: "id",
+                    fields: {
+                        id: {editable: false, nullable: true, type: "number"},
+                        name: {type: "string"},
+                        email: {type: "string"},
+                        dob: {type: "date"},
                     }
-                },
-                schema: {
-                    model: {
-                        id: "id",
-                        fields: {
-                            id: {editable: false, nullable: true, type: "number"},
-                            name: {type: "string"},
-                            email: {type: "string"},
-                            dob: {type: "date"},
-                        }
-                    }
-                },
-            })
-
-            $("#add").kendoButton({
-                themeColor: "success",
-                click: function () {
-                    var grid = $("#grid").data("kendoGrid");
-                    grid.addRow();
                 }
-            });
+            },
+        })
 
+
+        var dataDropDown = new kendo.data.DataSource({
+            data: [
+                {name: "user1", email: "Lisboa"},
+                {name: "user2", email: "Moscow"},
+                {name: "user3", email: "Napoli"},
+                {name: "user4", email: "Tokyo"},
+                {name: "user5", email: "Oslo"},
+                {name: "user6", email: "Paris"},
+                {name: "user7", email: "Porto"},
+                {name: "user8", email: "Rome"},
+                {name: "user9", email: "Berlin"},
+                {name: "user10", email: "Nice"},
+                {name: "user11", email: "New York"},
+                {name: "user12", email: "Sao Paulo"},
+                {name: "user13", email: "Rio De Janeiro"},
+                {name: "user14", email: "Venice"},
+                {name: "user15", email: "Los Angeles"},
+                {name: "user16", email: "Madrid"},
+                {name: "user17", email: "Barcelona"},
+                {name: "user18", email: "Prague"},
+                {name: "user19", email: "Mexico City"},
+                {name: "user20", email: "Buenos Aires"}
+            ],
+            sort: {field: "CityName", dir: "asc"}
+        });
+
+        function showDropDownList(data) {
+            $("#user").kendoDropDownList({
+                dataTextField: "email",
+                dataValueField: "name",
+                dataSource: data,
+                index: 0,
+            });
+        }
+
+        function showDataGrid(data) {
             $("#grid").kendoGrid({
                 editable: "popup",
-                toolbar: ["save"],
-                dataSource: dataSource,
+                dataSource: data,
                 height: 550,
                 groupable: true,
+                selectable: true,
                 sortable: true,
                 pageable: {
                     refresh: true,
@@ -79,35 +103,65 @@
                 columns: [{
                     field: "name",
                     title: "Name",
-                    template: "<p >#: name #</p>"
 
                 }, {
                     field: "email",
                     title: "Email",
-                    template: "<p >#: email #</p>"
 
-                }
-                    , {
-                        field: "dob",
-                        title: "Date of birth",
-                        template: "<p >#: dob #</p>"
-
-                    }, {command: "destroy", title: "&nbsp;", width: 120}
+                }, {
+                    field: "dob",
+                    title: "Date of birth",
+                    type: "date",
+                    format: "{0:dd-MM-yyyy}"
+                }, {template: "<button class='k-button' onclick='remove()'>Remove selected row</button>"}
                 ],
-                saveChanges: function (e) {
-                    if (!confirm("Are you sure you want to save all changes?")) {
-                        this.dataSource.sync()
-                        e.preventDefault();
-                    }
-                },
+
             }).data("kendoGrid");
-            $("#user").kendoDropDownList({
-                dataTextField: "name",
-                dataValueField: "id",
-                dataSource: usersList,
-                index: 0,
+        }
+
+        function remove() {
+            var grid = $("#grid").data("kendoGrid");
+            console.log("CLIKCKK")
+            console.log(grid.dataItem(grid.select()))
+            grid.removeRow(grid.select());
+        }
+
+        function showButton() {
+            $("#add").kendoButton({
+                themeColor: "success",
+                click: function () {
+                    var grid = $("#grid").data("kendoGrid");
+                    grid.addRow();
+                }
             });
-        });
+
+            $("#add-selected").kendoButton({
+                themeColor: "success",
+                click: function () {
+                    var newRow = {
+                        email: $("#user").data("kendoDropDownList").text(),
+                        name: $("#user").val(),
+                        dob: new Date()
+                    }
+                    var grid = $("#grid").data("kendoGrid");
+                    grid.dataSource.insert(0, newRow);
+                    addNewUser(newRow)
+                }
+            });
+
+        }
+
+        function addNewUser(data) {
+            $.ajax({
+                type: "POST",
+                url: "http://localhost:8081/users",
+                data: JSON.stringify(data),
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                },
+            });
+        }
     </script>
 </div>
 </body>

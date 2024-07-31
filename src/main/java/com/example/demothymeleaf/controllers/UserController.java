@@ -40,8 +40,7 @@ public class UserController {
 
     @PostMapping("/users")
     @ResponseBody
-    public void addUser(@RequestParam("user") UserRequestDto user, HttpServletRequest request) {
-        logger.info("Servlet rq: {}", request);
+    public void addUser(@RequestBody UserRequestDto user, HttpServletRequest request) {
         logger.info("Add user: {}", user);
         userService.addUser(user);
     }
