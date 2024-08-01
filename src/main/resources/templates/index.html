@@ -35,7 +35,6 @@
             showDataGrid(dataSource)
             showButton()
         });
-        var selectedItem
         var dataSource = new kendo.data.DataSource({
             data: [[${users}]],
             schema: {
@@ -50,7 +49,6 @@
                 }
             },
         })
-
 
         var dataDropDown = new kendo.data.DataSource({
             data: [
@@ -121,7 +119,6 @@
 
         function remove() {
             var grid = $("#grid").data("kendoGrid");
-            console.log("CLIKCKK")
             console.log(grid.dataItem(grid.select()))
             grid.removeRow(grid.select());
         }

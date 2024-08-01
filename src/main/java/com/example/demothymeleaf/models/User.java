@@ -19,8 +19,8 @@ public class User {
     @Id
     @Column(name = "user_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
-    String name;
-    String email;
-    LocalDateTime Dob;
+    private Long id;
+    private String name;
+    private String email;
+    private LocalDateTime Dob;
 }

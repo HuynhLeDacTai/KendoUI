@@ -1,13 +1,12 @@
-package com.example.demothymeleaf.services;
+package com.example.demothymeleaf.services.impl;
 
 import com.example.demothymeleaf.Dtos.UserRequestDto;
 import com.example.demothymeleaf.models.User;
 import com.example.demothymeleaf.repositories.UserRepository;
+import com.example.demothymeleaf.services.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -24,8 +23,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public void addUser(UserRequestDto user) {
         User newUser = User.builder().name(user.getName()).email(user.getEmail()).Dob(user.getDob()).build();
-
-        System.out.printf(String.valueOf(newUser));
         userRepository.save(newUser);
     }
 

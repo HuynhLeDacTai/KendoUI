@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Book</title>
+    <link href="https://kendo.cdn.telerik.com/themes/8.0.1/default/default-main.css" rel="stylesheet"/>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2024.2.514/js/kendo.all.min.js"></script>
+</head>
+<body>
+<div id="validation-success"></div>
+<form id="bookForm"></form>
+<div id="bookGrid"></div>
+<script th:inline="javascript">
+    $(document).ready(function () {
+        // var dataBooks = [[${books}]]
+        loadBookForm();
+        loadBookGrid()
+    });
+
+    function loadBookGrid() {
+        $("#bookGrid").kendoGrid({
+            editable: "popup",
+            dataSource: [[${books}]],
+            height: 550,
+            groupable: true,
+            selectable: true,
+            sortable: true,
+            pageable: {
+                refresh: true,
+                pageSizes: true,
+                buttonCount: 5
+            },
+            columns: [{
+                field: "title",
+                title: "Title",
+
+            }, {
+                field: "author",
+                title: "Author",
+
+            }, {
+                field: "published",
+                title: "Published Date",
+                type: "date",
+                format: "{0:dd-MM-yyyy}"
+            }, {
+                field: "category",
+                title: "Category",
+            }, {
+                field: "status",
+                title: "Status",
+            },
+                {template: "<button class='k-button' onclick='remove()'>Remove selected row</button>"}
+            ],
+
+        }).data("kendoGrid");
+    }
+
+    function loadBookForm() {
+        var validationSuccess = $("#validation-success");
+        $("#bookForm").kendoForm({
+            formData: {},
+            items: [{
+                type: "group",
+                label: "Book Form",
+                items: [
+                    {
+                        field: "title",
+                        label: "Title:",
+                        validation: {required: true},
+
+                    },
+                    {
+                        field: "author",
+                        label: "Author:",
+                        validation: {required: true}
+                    },
+                    {
+                        field: "published",
+                        label: "Published Date:",
+                        editor: "DateInput",
+                        validation: {required: true}
+                    },
+                    {
+                        field: "category",
+                        label: "Category:",
+                        editor: "DropDownList",
+                        validation: {required: true},
+                        editorOptions: {
+                            placeholder: "Select category",
+                            dataTextField: "name",
+                            dataValueField: "id",
+                            filter: "contains",
+                            dataSource: categories
+                        }
+                    },
+                    {
+                        field: "status",
+                        editor: "RadioGroup",
+                        label: "Status:",
+                        validation: {required: true},
+                        editorOptions: {
+                            items: ["Completed", "In progress"],
+                            layout: "horizontal",
+                            labelPosition: "before"
+                        }
+                    },
+
+                ]
+            }],
+            validateField: function (e) {
+                validationSuccess.html("");
+            },
+            submit: function (e) {
+                e.preventDefault();
+                var book = {
+                    title: $("#title").val(),
+                    author: $("#author").val(),
+                    published: $("#published").val(),
+                    status: $("#status").getKendoRadioGroup().value(),
+                    category: $("#category").data("kendoDropDownList").text(),
+                }
+                $.ajax({
+                    type: "POST",
+                    url: "http://localhost:8081/book/add",
+                    data: JSON.stringify(book),
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    success: function (data) {
+                        console.log(data)
+                    },
+                });
+                validationSuccess.html("<div class='k-messagebox k-messagebox-success'>Form data is valid!</div>");
+            },
+            clear: function (ev) {
+                validationSuccess.html("");
+            }
+        });
+    }
+
+    const categories = [
+        {id: 1, name: "Romantic"},
+        {id: 2, name: "Detective"},
+        {id: 3, name: "Novel"},
+        {id: 4, name: "Non-fiction"},
+        {id: 5, name: "Horror"},
+        {id: 6, name: "Adventure"},
+        {id: 7, name: "Action"},
+    ]
+</script>
+</body>
+
+</html>
